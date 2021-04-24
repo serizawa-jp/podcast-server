@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -105,9 +106,16 @@ func (p *Podcaster) Sync() error {
 		}
 
 		baseName := filepath.Base(fpath)
+
+		u, err := url.Parse(p.baseURL)
+		if err != nil {
+			return fmt.Errorf("failed to parse baseURL(%s): %w", p.baseURL, err)
+		}
+		u.Path = path.Join(u.Path, "static", baseName)
+
 		ep := Episode{
 			Title:         fpath,
-			URL:           path.Join(p.baseURL, "static", baseName),
+			URL:           u.String(),
 			LengthInBytes: stat.Size(),
 		}
 		if ss := strings.Split(baseName, "_"); len(ss) > 1 {
