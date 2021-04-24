@@ -20,6 +20,7 @@ func main() {
 func realMain() int {
 	baseURL := flag.String("baseurl", "", "base URL of server")
 	targetDir := flag.String("targetdir", "", "audio target directory")
+	basicAuth := flag.String("basicauth", "", "basic auth for HTTP server")
 	flag.Parse()
 
 	if baseURL == nil || *baseURL == "" {
@@ -49,7 +50,7 @@ func realMain() int {
 		logger.Error().Err(err).Msg("failed to initial sync")
 		return 1
 	}
-	handler, err := http.NewHTTPHandler(podcaster, *targetDir)
+	handler, err := http.NewHTTPHandler(podcaster, *targetDir, *basicAuth)
 	if err != nil {
 		logger.Error().Err(err).Msg("failed to create HTTP handler")
 		return 1
